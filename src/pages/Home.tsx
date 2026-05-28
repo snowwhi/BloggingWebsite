@@ -88,14 +88,7 @@ const Home = () => {
         <div className="absolute inset-0 bg-linear-to-b from-background/80 to-background" />
         <div className="container mx-auto px-4 py-24 text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <motion.span
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 }}
-              className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary mb-6"
-            >
-              <Sparkles className="h-3 w-3" /> Open blogging platform for curious minds
-            </motion.span>
+            
             <h1
               className="font-bold text-foreground mb-5 text-5xl md:text-7xl leading-tight"
               style={{ fontFamily: "'DM Serif Display', serif" }}
@@ -218,38 +211,6 @@ const Home = () => {
           </div>
         </section>
       )}
-
-      {/* 4. Topics Section */}
-      <section className="border-y border-border bg-card/30">
-        <div className="container mx-auto px-4 py-12">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="mb-6 flex items-center justify-between"
-          >
-            <h2 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'DM Serif Display', serif" }}>
-              Browse Topics
-            </h2>
-          </motion.div>
-          <div className="flex flex-wrap gap-3">
-            {TOPICS.map((topic, i) => (
-              <motion.button
-                key={topic.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                onClick={scrollToPosts}
-                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all hover:scale-105 hover:shadow-sm ${topic.color}`}
-              >
-                <span>{topic.emoji}</span> {topic.label}
-              </motion.button>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* 5. Latest Posts Grid */}
       <section ref={postsRef} className="container mx-auto px-4 py-12">
         <motion.div

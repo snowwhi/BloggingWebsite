@@ -66,7 +66,6 @@ const techStack = [
     description: "Backend services — Auth, Database, Storage",
   },
   { tech: "TinyMCE", description: "Rich text editing (GPL, self-hosted)" },
-  { tech: "TanStack Query", description: "Server state management and caching" },
 ];
 
 const containerVariants = {
@@ -212,9 +211,9 @@ export default function About() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name: "Sakina", role: "Full-Stack Developer", color: "bg-primary" },
-              { name: "Tahrim", role: "Frontend Developer", color: "bg-accent" },
-              { name: "Team Member 3", role: "Backend Developer", color: "bg-secondary" },
+              { name: "Sakeena", role: "Full-Stack Developer", color: "bg-primary" },
+              { name: "Tahreem", role: "Frontend Developer", color: "bg-secondary" },
+              { name: "Izah", role: "Backend Developer", color: "bg-accent" },
             ].map((member, i) => (
               <motion.div
                 key={i}

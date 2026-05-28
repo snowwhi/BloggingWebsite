@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, MessageSquare, Send, MapPin, Github, Twitter, Linkedin } from "lucide-react";
 import { toast } from "react-toastify";
+import emailjs from "@emailjs/browser"; // 1. Import EmailJS
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -14,18 +15,40 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise(r => setTimeout(r, 900));
-    toast.success("Message sent! We'll get back to you soon. 🙌");
-    setForm({ name: "", email: "", subject: "", message: "" });
-    setLoading(false);
+
+    // 2. Define your EmailJS configuration credentials
+    const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const TEMPLATE_ID =import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const PUBLIC_KEY =import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    // 3. Map your form fields to template parameters
+    const templateParams = {
+      name: form.name,
+      email: form.email,
+      subject: form.subject,
+      message: form.message,
+    };
+
+    try {
+      // 4. Send the email using the SDK
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
+      
+      toast.success("Message sent! We'll get back to you soon. 🙌");
+      setForm({ name: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      toast.error("Oops! Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contactInfo = [
     {
       icon: <Mail className="h-5 w-5" />,
       label: "Email",
-      value: "hello@inkwell.dev",
-      href: "mailto:hello@inkwell.dev",
+      value: "Example@inkwell.dev",
+      href: "mailto:Example@inkwell.dev",
     },
     {
       icon: <MapPin className="h-5 w-5" />,
