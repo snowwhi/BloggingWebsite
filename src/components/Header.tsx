@@ -48,6 +48,7 @@ const Header = () => {
           <div className="flex items-center gap-4 mr-2">
             <NavLink to="/" end className={navLinkClass}>Home</NavLink>
             <NavLink to="/about" className={navLinkClass}>About</NavLink>
+            <NavLink to="/contact" className={navLinkClass}>Contact</NavLink>
           </div>
 
           <div className="flex items-center gap-2">
@@ -156,6 +157,7 @@ const Header = () => {
             <div className="flex flex-col p-4 gap-4">
               <NavLink to="/" end onClick={closeMobileMenu} className={navLinkClass}>Home</NavLink>
               <NavLink to="/about" onClick={closeMobileMenu} className={navLinkClass}>About</NavLink>
+              <NavLink to="/contact" onClick={closeMobileMenu} className={navLinkClass}>Contact</NavLink>
               <NavLink to="/bookmarks" onClick={closeMobileMenu} className={navLinkClass}>Reading List</NavLink>
 
               <div className="h-px bg-border w-full my-2" />

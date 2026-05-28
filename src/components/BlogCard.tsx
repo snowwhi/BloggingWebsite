@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, User, ImageIcon, Bookmark, BookmarkCheck } from "lucide-react";
@@ -38,9 +39,11 @@ const BlogCard = ({
   status,
 }: BlogCardProps) => {
   const { isBookmarked, toggleBookmark } = useBookmarks();
+  const [imgError, setImgError] = useState(false);
   const excerpt = stripHtml(content).slice(0, 160) + "...";
   const readingTime = getReadingTime(content);
   const bookmarked = isBookmarked(id);
+  const showImage = featuredImage && !imgError;
 
   return (
     <motion.article
@@ -74,15 +77,16 @@ const BlogCard = ({
         className="block overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1"
       >
         <div className="aspect-video overflow-hidden">
-          {featuredImage ? (
+          {showImage ? (
             <img
               src={featuredImage}
               alt={title}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
+              onError={() => setImgError(true)}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
               <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
             </div>
           )}
@@ -98,7 +102,7 @@ const BlogCard = ({
               {readingTime} min read
             </span>
           </div>
-          <h2 className="font-display text-xl font-bold text-card-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+          <h2 className="font-display text-xl font-bold text-card-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors" style={{ fontFamily: "'DM Serif Display', serif" }}>
             {title}
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-3">

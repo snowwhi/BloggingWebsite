@@ -17,6 +17,7 @@ const PostDetail = () => {
   const [recentPosts, setRecentPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const navigate = useNavigate();
   const contentRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
@@ -123,7 +124,7 @@ const PostDetail = () => {
   }
 
   const imageUrl = post.featuredimage
-    ? String(databaseService.getFileView(post.featuredimage))
+    ? databaseService.getFileView(post.featuredimage)
     : null;
 
   const bookmarked = isBookmarked(post.$id);
@@ -247,7 +248,7 @@ const PostDetail = () => {
           </motion.div>
 
           {/* Featured Image */}
-          {imageUrl ? (
+          {imageUrl && !imgError ? (
             <motion.img
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -255,13 +256,14 @@ const PostDetail = () => {
               src={imageUrl}
               alt={post.Title}
               className="w-full rounded-xl mb-12 object-cover max-h-[500px]"
+              onError={() => setImgError(true)}
             />
           ) : (
             <motion.div
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
-              className="flex aspect-video w-full items-center justify-center rounded-xl mb-12 bg-gradient-to-br from-muted to-muted/50"
+              className="flex aspect-video w-full items-center justify-center rounded-xl mb-12 bg-gradient-to-br from-primary/5 to-primary/10"
             >
               <ImageIcon className="h-12 w-12 text-muted-foreground/40" />
             </motion.div>

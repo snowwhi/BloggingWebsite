@@ -188,15 +188,24 @@ class DatabaseService {
     }
   }
 
-  getFileView(fileId: string) {
+  getFileView(fileId: string): string {
     if (!fileId) return "";
     if (fileId.startsWith("http://") || fileId.startsWith("https://")) {
       return fileId;
     }
-    return this.bucket.getFileView(
-      appwriteConfig.appwriteBucketid,
-      fileId
-    );
+    try {
+      const url = this.bucket.getFilePreview(
+        appwriteConfig.appwriteBucketid,
+        fileId,
+        1200,
+        undefined,
+        undefined,
+        85
+      );
+      return String(url);
+    } catch {
+      return "";
+    }
   }
 }
 
