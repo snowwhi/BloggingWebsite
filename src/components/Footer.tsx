@@ -6,7 +6,7 @@ const Footer = () => {
     <footer className="bg-card border-t border-border mt-auto">
       <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
-          
+
           {/* Column 1: About the Project */}
           <div className="md:col-span-2">
             <Link to="/" className="inline-block mb-4">
@@ -15,9 +15,9 @@ const Footer = () => {
               </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
-              Inkwell is a modern, full-stack blogging platform developed as a Final Year Project. 
-              It aims to provide a seamless, rich-text writing experience alongside accessible reading 
-              features like Text-to-Speech, all wrapped in a premium user interface.
+              Inkwell is a modern, full-stack blogging platform developed as a Final Year Project.
+              It provides a seamless rich-text writing experience, smart search, personal reading lists,
+              and a premium responsive interface.
             </p>
             <div className="flex gap-4 mt-6">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
@@ -40,10 +40,10 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>Rich Text & Image Uploads</li>
-              <li>Text-to-Speech Narration</li>
+              <li>Story Search</li>
+              <li>Personal Reading List</li>
               <li>Secure Role-Based Auth</li>
-              <li>Serverless Cloud Backend</li>
-              <li>Responsive Dynamic UI</li>
+              <li>Dark & Light Mode</li>
             </ul>
           </div>
 

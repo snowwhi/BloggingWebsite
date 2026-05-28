@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Clock, User, ImageIcon } from "lucide-react";
+import { Clock, User, ImageIcon, Bookmark, BookmarkCheck } from "lucide-react";
+import { useBookmarks } from "../hooks/useBookmarks";
 
-// 1. Define the Interface for your props
 interface BlogCardProps {
   id: string;
   title: string;
@@ -15,8 +15,7 @@ interface BlogCardProps {
 }
 
 const stripHtml = (html: string) => {
-  // Check for window to avoid SSR errors
-  if (typeof window === "undefined") return html; 
+  if (typeof window === "undefined") return html;
   const tmp = document.createElement("div");
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText || "";
@@ -24,32 +23,54 @@ const stripHtml = (html: string) => {
 
 const getReadingTime = (content: string) => {
   if (!content) return 1;
-  const wordCount = content.replace(/<[^>]*>?/gm, '').split(/\s+/).length;
+  const wordCount = content.replace(/<[^>]*>?/gm, "").split(/\s+/).length;
   return Math.ceil(wordCount / 200);
 };
 
-const BlogCard = ({ 
-  id, 
-  title, 
-  content, 
-  featuredImage, 
-  userId, 
-  createdAt, 
+const BlogCard = ({
+  id,
+  title,
+  content,
+  featuredImage,
+  userId,
+  createdAt,
   index = 0,
-  status
-}: BlogCardProps) => { // 2. Apply the interface here
+  status,
+}: BlogCardProps) => {
+  const { isBookmarked, toggleBookmark } = useBookmarks();
   const excerpt = stripHtml(content).slice(0, 160) + "...";
   const readingTime = getReadingTime(content);
+  const bookmarked = isBookmarked(id);
 
   return (
     <motion.article
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group"
+      className="group relative"
     >
-      <Link 
-        to={`/post/${id}`} 
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleBookmark({ id, title, content, featuredImage: featuredImage ?? undefined, createdAt: createdAt ? String(createdAt) : undefined, userId });
+        }}
+        title={bookmarked ? "Remove from reading list" : "Save to reading list"}
+        className={`absolute top-3 right-3 z-10 rounded-full p-1.5 shadow transition-all
+          ${bookmarked
+            ? "bg-primary text-primary-foreground opacity-100"
+            : "bg-background/80 backdrop-blur text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-primary"
+          }`}
+      >
+        {bookmarked ? (
+          <BookmarkCheck className="h-4 w-4" />
+        ) : (
+          <Bookmark className="h-4 w-4" />
+        )}
+      </button>
+
+      <Link
+        to={`/post/${id}`}
         className="block overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1"
       >
         <div className="aspect-video overflow-hidden">
@@ -92,10 +113,10 @@ const BlogCard = ({
             {createdAt && (
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
-                {new Date(createdAt).toLocaleDateString("en-US", { 
-                  month: "short", 
-                  day: "numeric", 
-                  year: "numeric" 
+                {new Date(createdAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
                 })}
               </span>
             )}

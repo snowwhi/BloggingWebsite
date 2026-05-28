@@ -2,10 +2,12 @@ import { motion } from "framer-motion";
 import {
   Pencil,
   Cloud,
-  Volume2,
+  Search,
   ImageIcon,
   Shield,
   Smartphone,
+  Bookmark,
+  Moon,
 } from "lucide-react";
 
 const features = [
@@ -20,9 +22,9 @@ const features = [
     desc: "Secure authentication and file storage powered by Appwrite's backend-as-a-service.",
   },
   {
-    icon: Volume2,
-    title: "Text-to-Speech",
-    desc: "Listen to any article with built-in browser speech synthesis for accessibility.",
+    icon: Search,
+    title: "Story Search",
+    desc: "Instantly search across all published stories by title or content to find exactly what you need.",
   },
   {
     icon: ImageIcon,
@@ -39,6 +41,16 @@ const features = [
     title: "Responsive Design",
     desc: "Fully responsive layout that looks great on mobile, tablet, and desktop devices.",
   },
+  {
+    icon: Bookmark,
+    title: "Reading List",
+    desc: "Bookmark any story to your personal reading list, saved locally so it's always there when you return.",
+  },
+  {
+    icon: Moon,
+    title: "Dark & Light Mode",
+    desc: "Comfortable reading in any lighting condition with a smooth theme toggle built right into the header.",
+  },
 ];
 
 const techStack = [
@@ -54,12 +66,7 @@ const techStack = [
     description: "Backend services — Auth, Database, Storage",
   },
   { tech: "TinyMCE", description: "Rich text editing (GPL, self-hosted)" },
-];
-
-const team = [
-  { name: "Team Member 1", role: "Full-Stack Developer", color: "bg-primary" },
-  { name: "Team Member 2", role: "Frontend Developer", color: "bg-accent" },
-  { name: "Team Member 3", role: "Backend Developer", color: "bg-secondary" },
+  { tech: "TanStack Query", description: "Server state management and caching" },
 ];
 
 const containerVariants = {
@@ -80,7 +87,7 @@ export default function About() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-5xl mx-auto px-4 py-12">
-        {/* ── Section 1: Project Overview ── */}
+        {/* Section 1: Project Overview */}
         <motion.section
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -102,7 +109,7 @@ export default function About() {
           </p>
         </motion.section>
 
-        {/* ── Section 2: Features Grid ── */}
+        {/* Section 2: Features Grid */}
         <section className="mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -110,12 +117,13 @@ export default function About() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             className="text-3xl font-bold text-foreground text-center mb-10"
+            style={{ fontFamily: "'DM Serif Display', serif" }}
           >
             Features
           </motion.h2>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -139,7 +147,7 @@ export default function About() {
           </motion.div>
         </section>
 
-        {/* ── Section 3: Tech Stack Table ── */}
+        {/* Section 3: Tech Stack Table */}
         <section className="mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -147,6 +155,7 @@ export default function About() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             className="text-3xl font-bold text-foreground text-center mb-10"
+            style={{ fontFamily: "'DM Serif Display', serif" }}
           >
             Tech Stack
           </motion.h2>
@@ -173,9 +182,7 @@ export default function About() {
                 {techStack.map((row, index) => (
                   <tr
                     key={row.tech}
-                    className={
-                      index % 2 === 0 ? "bg-card" : "bg-muted/50"
-                    }
+                    className={index % 2 === 0 ? "bg-card" : "bg-muted/50"}
                   >
                     <td className="px-6 py-4 text-sm font-medium text-foreground">
                       {row.tech}
@@ -190,15 +197,17 @@ export default function About() {
           </motion.div>
         </section>
 
-        {/* ── Section 4: Team Section ── */}
-        {/* 4. Team Section */}
+        {/* Section 4: Team Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mb-20"
         >
-          <h2 className="text-3xl font-bold text-foreground mb-8 text-center" style={{ fontFamily: "'DM Serif Display', serif" }}>
+          <h2
+            className="text-3xl font-bold text-foreground mb-8 text-center"
+            style={{ fontFamily: "'DM Serif Display', serif" }}
+          >
             The Team
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -207,15 +216,19 @@ export default function About() {
               { name: "Tahrim", role: "Frontend Developer", color: "bg-accent" },
               { name: "Team Member 3", role: "Backend Developer", color: "bg-secondary" },
             ].map((member, i) => (
-              <motion.div 
+              <motion.div
                 key={i}
                 variants={cardVariants}
                 className="bg-card rounded-2xl border border-border p-8 text-center hover:shadow-lg transition-all"
               >
-                <div className={`w-24 h-24 mx-auto rounded-full ${member.color} mb-4 flex items-center justify-center text-white text-3xl font-bold`}>
+                <div
+                  className={`w-24 h-24 mx-auto rounded-full ${member.color} mb-4 flex items-center justify-center text-white text-3xl font-bold`}
+                >
                   {member.name.charAt(0)}
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-1">{member.name}</h3>
+                <h3 className="text-xl font-bold text-foreground mb-1">
+                  {member.name}
+                </h3>
                 <p className="text-muted-foreground">{member.role}</p>
               </motion.div>
             ))}

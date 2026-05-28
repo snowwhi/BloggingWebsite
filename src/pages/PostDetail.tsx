@@ -5,11 +5,11 @@ import parse from "html-react-parser";
 import { Query } from "appwrite";
 import databaseService from "../lib/databaseService";
 import { PostDetailSkeleton } from "../components/BlogSkeleton";
-import TextToSpeech from "../components/TextToSpeech";
 import BlogCard from "../components/BlogCard";
-import { ArrowLeft, Clock, Share2, Pencil, Trash2, ImageIcon } from "lucide-react";
+import { ArrowLeft, Clock, Share2, Pencil, Trash2, ImageIcon, Bookmark, BookmarkCheck } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/AuthContext";
+import { useBookmarks } from "../hooks/useBookmarks";
 
 const PostDetail = () => {
   const { id } = useParams();
@@ -20,11 +20,12 @@ const PostDetail = () => {
   const navigate = useNavigate();
   const contentRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+  const { isBookmarked, toggleBookmark } = useBookmarks();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
-    restDelta: 0.001
+    restDelta: 0.001,
   });
 
   const isOwner =
@@ -42,14 +43,13 @@ const PostDetail = () => {
       try {
         const result = await databaseService.getPost(id);
         setPost(result);
-        
-        // Fetch recent posts
+
         const recentResult = await databaseService.getPosts([
           Query.equal("status", "active"),
           Query.orderDesc("$createdAt"),
-          Query.limit(4) // Fetch 4 in case one of them is the current post
+          Query.limit(4),
         ]);
-        
+
         if (recentResult) {
           const filtered = recentResult.documents
             .filter((p) => p.$id !== id)
@@ -66,15 +66,9 @@ const PostDetail = () => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  const getPlainText = (html: string) => {
-    const tmp = document.createElement("div");
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || "";
-  };
-
   const getReadingTime = (content: string) => {
     if (!content) return 1;
-    const wordCount = content.replace(/<[^>]*>?/gm, '').split(/\s+/).length;
+    const wordCount = content.replace(/<[^>]*>?/gm, "").split(/\s+/).length;
     return Math.ceil(wordCount / 200);
   };
 
@@ -108,8 +102,15 @@ const PostDetail = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="font-display text-3xl font-bold text-foreground mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>Story Not Found</h1>
-          <p className="text-muted-foreground mb-6">This story may have been removed or doesn't exist.</p>
+          <h1
+            className="font-display text-3xl font-bold text-foreground mb-2"
+            style={{ fontFamily: "'DM Serif Display', serif" }}
+          >
+            Story Not Found
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            This story may have been removed or doesn't exist.
+          </p>
           <button
             onClick={() => navigate("/")}
             className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
@@ -125,23 +126,26 @@ const PostDetail = () => {
     ? String(databaseService.getFileView(post.featuredimage))
     : null;
 
+  const bookmarked = isBookmarked(post.$id);
+  const bookmarkPost = () =>
+    toggleBookmark({
+      id: post.$id,
+      title: post.Title,
+      content: post.Content,
+      featuredImage: imageUrl ?? undefined,
+      createdAt: post.$createdAt,
+      userId: post.userId,
+    });
+
   return (
     <div className="min-h-screen bg-background relative">
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-primary origin-left z-[60]"
         style={{ scaleX }}
       />
-      
-      {/* Floating TTS Button for desktop */}
-      <div className="hidden md:block fixed right-8 bottom-8 z-50">
-        <div className="bg-background border border-border shadow-lg rounded-full p-2">
-          <TextToSpeech text={getPlainText(post.Content)} contentRef={contentRef} />
-        </div>
-      </div>
 
       <div className="container mx-auto max-w-3xl px-4 py-8">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
-
           <button
             onClick={() => navigate(-1)}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
@@ -159,7 +163,7 @@ const PostDetail = () => {
             >
               {post.Title}
             </motion.h1>
-            
+
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -183,7 +187,9 @@ const PostDetail = () => {
               <span className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
                 {new Date(post.$createdAt).toLocaleDateString("en-US", {
-                  month: "long", day: "numeric", year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
                 })}
               </span>
             )}
@@ -192,22 +198,35 @@ const PostDetail = () => {
             </span>
           </motion.div>
 
-          {/* Mobile TTS & Actions row */}
+          {/* Actions row */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.25 }}
-            className="flex flex-wrap items-center gap-2 mb-8 md:justify-start"
+            className="flex flex-wrap items-center gap-2 mb-8"
           >
-            <div className="md:hidden">
-              <TextToSpeech text={getPlainText(post.Content)} contentRef={contentRef} />
-            </div>
+            <button
+              onClick={bookmarkPost}
+              className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition-colors
+                ${bookmarked
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                }`}
+              title={bookmarked ? "Saved to reading list" : "Save to reading list"}
+            >
+              {bookmarked ? (
+                <BookmarkCheck className="h-3.5 w-3.5" />
+              ) : (
+                <Bookmark className="h-3.5 w-3.5" />
+              )}
+              {bookmarked ? "Saved" : "Save"}
+            </button>
 
             {isOwner && (
               <>
                 <Link
                   to={`/edit/${post.$id}`}
-                  className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition-colors hover:opacity-90"
+                  className="flex items-center gap-1.5 rounded-full bg-secondary px-3 py-2 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
                 >
                   <Pencil className="h-3.5 w-3.5" /> Edit
                 </Link>
@@ -258,16 +277,19 @@ const PostDetail = () => {
           >
             {parse(post.Content || "")}
           </motion.div>
-          
-          {/* More from Inkwell section */}
+
+          {/* More from Inkwell */}
           {recentPosts.length > 0 && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="mt-20 pt-10 border-t border-border"
             >
-              <h3 className="text-2xl font-bold text-foreground mb-6" style={{ fontFamily: "'DM Serif Display', serif" }}>
+              <h3
+                className="text-2xl font-bold text-foreground mb-6"
+                style={{ fontFamily: "'DM Serif Display', serif" }}
+              >
                 More from Inkwell
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -277,7 +299,11 @@ const PostDetail = () => {
                     id={rp.$id}
                     title={rp.Title}
                     content={rp.Content}
-                    featuredImage={rp.featuredimage ? String(databaseService.getFileView(rp.featuredimage)) : undefined}
+                    featuredImage={
+                      rp.featuredimage
+                        ? String(databaseService.getFileView(rp.featuredimage))
+                        : undefined
+                    }
                     userId={rp.userId}
                     createdAt={rp.$createdAt}
                     index={i}
@@ -287,7 +313,6 @@ const PostDetail = () => {
               </div>
             </motion.div>
           )}
-
         </motion.div>
       </div>
     </div>

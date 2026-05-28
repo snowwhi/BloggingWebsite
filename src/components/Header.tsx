@@ -4,7 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sun, Moon, LogOut, PenSquare, User, Menu, X } from "lucide-react";
+import { Sun, Moon, LogOut, PenSquare, User, Menu, X, Search, Bookmark } from "lucide-react";
 
 const Header = () => {
   const { user, logout, loading } = useAuth();
@@ -51,6 +51,24 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            <Link
+              to="/search"
+              className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              aria-label="Search stories"
+              title="Search"
+            >
+              <Search className="h-5 w-5" />
+            </Link>
+
+            <Link
+              to="/bookmarks"
+              className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              aria-label="Reading list"
+              title="Reading List"
+            >
+              <Bookmark className="h-5 w-5" />
+            </Link>
+
             <button
               onClick={toggleTheme}
               className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
@@ -103,6 +121,13 @@ const Header = () => {
 
         {/* Mobile Menu Toggle */}
         <div className="flex items-center gap-2 md:hidden">
+          <Link
+            to="/search"
+            onClick={closeMobileMenu}
+            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            <Search className="h-5 w-5" />
+          </Link>
           <button
             onClick={toggleTheme}
             className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
@@ -131,9 +156,10 @@ const Header = () => {
             <div className="flex flex-col p-4 gap-4">
               <NavLink to="/" end onClick={closeMobileMenu} className={navLinkClass}>Home</NavLink>
               <NavLink to="/about" onClick={closeMobileMenu} className={navLinkClass}>About</NavLink>
-              
+              <NavLink to="/bookmarks" onClick={closeMobileMenu} className={navLinkClass}>Reading List</NavLink>
+
               <div className="h-px bg-border w-full my-2" />
-              
+
               {loading ? (
                 <div className="h-8 w-20 rounded-md skeleton-shimmer" />
               ) : user ? (

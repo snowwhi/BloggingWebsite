@@ -17,6 +17,8 @@ const CreatePost = lazy(() => import("./pages/CreatePost"));
 const PostDetail = lazy(() => import("./pages/PostDetail"));
 const EditPost = lazy(() => import("./pages/EditPost"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const SearchPage = lazy(() => import("./pages/Search"));
+const BookmarksPage = lazy(() => import("./pages/Bookmarks"));
 import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
@@ -54,6 +56,8 @@ const App = () => (
                     <Route path="/create" element={<CreatePost />} />
                     <Route path="/post/:id" element={<PostDetail />} />
                     <Route path="/edit/:id" element={<EditPost />} />
+                    <Route path="/search" element={<SearchPage />} />
+                    <Route path="/bookmarks" element={<BookmarksPage />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
