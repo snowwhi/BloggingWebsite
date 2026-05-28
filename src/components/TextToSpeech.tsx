@@ -34,8 +34,10 @@ const TextToSpeech = ({ text }: TextToSpeechProps) => {
     };
   }, []);
 
-  const doSpeak = useCallback(() => {
+  const startSpeaking = useCallback(() => {
     if (!text) return;
+
+    // Cancel any existing speech immediately
     window.speechSynthesis.cancel();
     clearResumeInterval();
 
@@ -45,7 +47,6 @@ const TextToSpeech = ({ text }: TextToSpeechProps) => {
 
     const voices = window.speechSynthesis.getVoices();
     const englishVoice = voices.find((v) => v.lang.startsWith("en"));
-    // ✅ FIX 1 continued — never assign null, only assign if a voice exists
     if (englishVoice) utterance.voice = englishVoice;
 
     utterance.onboundary = (event) => {
@@ -69,13 +70,17 @@ const TextToSpeech = ({ text }: TextToSpeechProps) => {
     };
 
     utteranceRef.current = utterance;
+
+    // speak() must be called directly inside the click handler (user-gesture context).
+    // A setTimeout here would break Chrome desktop's gesture requirement and cause
+    // silent failure — mobile is more lenient, which is why it worked there only.
     window.speechSynthesis.speak(utterance);
     setIsSpeaking(true);
     setIsPaused(false);
     setIsLoading(false);
 
-    // ✅ FIX 2 — Chrome desktop silently stops TTS after ~15 seconds
-    // This interval nudges it every 14 seconds to keep it alive
+    // Chrome desktop silently stops TTS after ~15 seconds due to GC.
+    // This interval nudges it every 14 seconds to keep it alive.
     resumeIntervalRef.current = setInterval(() => {
       if (!window.speechSynthesis.speaking) {
         clearResumeInterval();
@@ -84,15 +89,7 @@ const TextToSpeech = ({ text }: TextToSpeechProps) => {
       window.speechSynthesis.pause();
       window.speechSynthesis.resume();
     }, 14000);
-  }, [text]);
-
-  const startSpeaking = useCallback(() => {
-    if (!text) return;
-    setIsLoading(true);
-    // Small timeout gives browser a moment to confirm user gesture
-    // while keeping the gesture context alive
-    setTimeout(() => doSpeak(), 50);
-  }, [text, doSpeak]);
+  }, [text, clearResumeInterval]);
 
   const stopSpeaking = useCallback(() => {
     window.speechSynthesis.cancel();

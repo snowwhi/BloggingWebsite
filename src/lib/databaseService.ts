@@ -196,8 +196,7 @@ class DatabaseService {
     return this.bucket.getFileView(
       appwriteConfig.appwriteBucketid,
       fileId
-    ).href;
-     console.log("getFileView input:", fileId, "| output:", url);
+    );
   }
 }
 
