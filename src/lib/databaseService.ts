@@ -194,15 +194,10 @@ class DatabaseService {
       return fileId;
     }
     try {
-      const url = this.bucket.getFilePreview(
+      return this.bucket.getFileView(
         appwriteConfig.appwriteBucketid,
-        fileId,
-        1200,
-        undefined,
-        undefined,
-        85
+        fileId
       );
-      return String(url);
     } catch {
       return "";
     }
