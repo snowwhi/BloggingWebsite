@@ -6,7 +6,7 @@ import { Query } from "appwrite";
 import databaseService from "../lib/databaseService";
 import { PostDetailSkeleton } from "../components/BlogSkeleton";
 import BlogCard from "../components/BlogCard";
-import { ArrowLeft, Clock, Share2, Pencil, Trash2, ImageIcon, Bookmark, BookmarkCheck } from "lucide-react";
+import { ArrowLeft, Clock, Share2, Pencil, Trash2, Bookmark, BookmarkCheck } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/AuthContext";
 import { useBookmarks } from "../hooks/useBookmarks";
@@ -17,7 +17,6 @@ const PostDetail = () => {
   const [recentPosts, setRecentPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const [imgError, setImgError] = useState(false);
   const navigate = useNavigate();
   const contentRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
@@ -87,7 +86,6 @@ const PostDetail = () => {
     setDeleting(true);
     try {
       await databaseService.deletePost(post.$id);
-      if (post.featuredimage) await databaseService.deleteFile(post.featuredimage);
       toast.success("Story deleted!");
       navigate("/");
     } catch {
@@ -123,17 +121,12 @@ const PostDetail = () => {
     );
   }
 
-  const imageUrl = post.featuredimage
-    ? databaseService.getFileView(post.featuredimage)
-    : null;
-
   const bookmarked = isBookmarked(post.$id);
   const bookmarkPost = () =>
     toggleBookmark({
       id: post.$id,
       title: post.Title,
       content: post.Content,
-      featuredImage: imageUrl ?? undefined,
       createdAt: post.$createdAt,
       userId: post.userId,
     });
@@ -204,7 +197,7 @@ const PostDetail = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.25 }}
-            className="flex flex-wrap items-center gap-2 mb-8"
+            className="flex flex-wrap items-center gap-2 mb-10"
           >
             <button
               onClick={bookmarkPost}
@@ -247,34 +240,12 @@ const PostDetail = () => {
             )}
           </motion.div>
 
-          {/* Featured Image */}
-          {imageUrl && !imgError ? (
-            <motion.img
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              src={imageUrl}
-              alt={post.Title}
-              className="w-full rounded-xl mb-12 object-cover max-h-[500px]"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex aspect-video w-full items-center justify-center rounded-xl mb-12 bg-gradient-to-br from-primary/5 to-primary/10"
-            >
-              <ImageIcon className="h-12 w-12 text-muted-foreground/40" />
-            </motion.div>
-          )}
-
           {/* Content */}
           <motion.div
             ref={contentRef}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.35 }}
             className="blog-content text-foreground text-lg"
           >
             {parse(post.Content || "")}
@@ -301,11 +272,6 @@ const PostDetail = () => {
                     id={rp.$id}
                     title={rp.Title}
                     content={rp.Content}
-                    featuredImage={
-                      rp.featuredimage
-                        ? String(databaseService.getFileView(rp.featuredimage))
-                        : undefined
-                    }
                     userId={rp.userId}
                     createdAt={rp.$createdAt}
                     index={i}

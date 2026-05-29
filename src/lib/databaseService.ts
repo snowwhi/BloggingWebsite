@@ -1,17 +1,15 @@
-import { Client, Databases, Storage, Query, ID, Permission, Role } from "appwrite";
+import { Client, Databases, Query, ID, Permission, Role } from "appwrite";
 import appwriteConfig from "./appwriteConfig";
 
 class DatabaseService {
   client = new Client();
   databases: Databases;
-  bucket: Storage;
 
   constructor() {
     this.client
       .setEndpoint(appwriteConfig.appwriteUrl)
       .setProject(appwriteConfig.appwriteProjectid);
     this.databases = new Databases(this.client);
-    this.bucket = new Storage(this.client);
   }
 
   // ─── Posts ───────────────────────────────────────────────────────────────────
@@ -20,14 +18,12 @@ class DatabaseService {
     title,
     slug,
     content,
-    featuredImage,
     status,
     userId,
   }: {
     title: string;
     slug: string;
     content: string;
-    featuredImage: string;
     status: string;
     userId?: string;
   }) {
@@ -44,7 +40,6 @@ class DatabaseService {
       {
         Title: title,
         Content: content,
-        featuredimage: featuredImage,
         status,
       },
       permissions
@@ -56,13 +51,11 @@ class DatabaseService {
     {
       title,
       content,
-      featuredImage,
       status,
       userId,
     }: {
       title: string;
       content: string;
-      featuredImage: string;
       status: string;
       userId?: string;
     }
@@ -82,7 +75,6 @@ class DatabaseService {
       {
         Title: title,
         Content: content,
-        featuredimage: featuredImage,
         status,
       },
       permissions
@@ -146,7 +138,6 @@ class DatabaseService {
             {
               Title: doc.Title,
               Content: doc.Content,
-              featuredimage: doc.featuredimage || "",
               status: doc.status || "active",
             },
             [
@@ -161,45 +152,6 @@ class DatabaseService {
       return true;
     } catch {
       return false;
-    }
-  }
-
-  // ─── Storage ─────────────────────────────────────────────────────────────────
-
-  async uploadFile(file: File) {
-    try {
-      return await this.bucket.createFile(
-        appwriteConfig.appwriteBucketid,
-        ID.unique(),
-        file,
-        [Permission.read(Role.any())]
-      );
-    } catch {
-      return null;
-    }
-  }
-
-  async deleteFile(fileId: string) {
-    try {
-      await this.bucket.deleteFile(appwriteConfig.appwriteBucketid, fileId);
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  getFileView(fileId: string): string {
-    if (!fileId) return "";
-    if (fileId.startsWith("http://") || fileId.startsWith("https://")) {
-      return fileId;
-    }
-    try {
-      return this.bucket.getFileView(
-        appwriteConfig.appwriteBucketid,
-        fileId
-      );
-    } catch {
-      return "";
     }
   }
 }

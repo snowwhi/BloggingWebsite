@@ -39,7 +39,7 @@ const Footer = () => {
               Platform Features
             </h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              <li>Rich Text & Image Uploads</li>
+              <li>Rich Text Editor</li>
               <li>Story Search</li>
               <li>Personal Reading List</li>
               <li>Secure Role-Based Auth</li>

@@ -1,14 +1,12 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Clock, User, ImageIcon, Bookmark, BookmarkCheck } from "lucide-react";
+import { Clock, User, Bookmark, BookmarkCheck } from "lucide-react";
 import { useBookmarks } from "../hooks/useBookmarks";
 
 interface BlogCardProps {
   id: string;
   title: string;
   content: string;
-  featuredImage?: string | null;
   userId?: string;
   createdAt?: string | number | Date;
   index?: number;
@@ -32,18 +30,15 @@ const BlogCard = ({
   id,
   title,
   content,
-  featuredImage,
   userId,
   createdAt,
   index = 0,
   status,
 }: BlogCardProps) => {
   const { isBookmarked, toggleBookmark } = useBookmarks();
-  const [imgError, setImgError] = useState(false);
   const excerpt = stripHtml(content).slice(0, 160) + "...";
   const readingTime = getReadingTime(content);
   const bookmarked = isBookmarked(id);
-  const showImage = featuredImage && !imgError;
 
   return (
     <motion.article
@@ -56,7 +51,7 @@ const BlogCard = ({
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          toggleBookmark({ id, title, content, featuredImage: featuredImage ?? undefined, createdAt: createdAt ? String(createdAt) : undefined, userId });
+          toggleBookmark({ id, title, content, createdAt: createdAt ? String(createdAt) : undefined, userId });
         }}
         title={bookmarked ? "Remove from reading list" : "Save to reading list"}
         className={`absolute top-3 right-3 z-10 rounded-full p-1.5 shadow transition-all
@@ -76,21 +71,7 @@ const BlogCard = ({
         to={`/post/${id}`}
         className="block overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1"
       >
-        <div className="aspect-video overflow-hidden">
-          {showImage ? (
-            <img
-              src={featuredImage}
-              alt={title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-              <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
-            </div>
-          )}
-        </div>
+        <div className="h-1.5 w-full bg-gradient-to-r from-primary/70 via-primary/40 to-primary/10" />
         <div className="p-5">
           <div className="flex items-center gap-2 mb-3">
             {status === "featured" && (

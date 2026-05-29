@@ -3,7 +3,6 @@ import {
   Pencil,
   Cloud,
   Search,
-  ImageIcon,
   Shield,
   Smartphone,
   Bookmark,
@@ -14,22 +13,17 @@ const features = [
   {
     icon: Pencil,
     title: "Rich Text Editor",
-    desc: "Write with a full-featured TinyMCE editor supporting formatting, images, and code blocks.",
+    desc: "Write with a full-featured TinyMCE editor supporting formatting, links, code blocks, and more.",
   },
   {
     icon: Cloud,
-    title: "Cloud Storage & Auth",
-    desc: "Secure authentication and file storage powered by Appwrite's backend-as-a-service.",
+    title: "Cloud Auth & Database",
+    desc: "Secure authentication and data storage powered by Appwrite's backend-as-a-service.",
   },
   {
     icon: Search,
     title: "Story Search",
     desc: "Instantly search across all published stories by title or content to find exactly what you need.",
-  },
-  {
-    icon: ImageIcon,
-    title: "Featured Image Support",
-    desc: "Upload cover images stored in Appwrite cloud storage with automatic CDN delivery.",
   },
   {
     icon: Shield,
@@ -63,7 +57,7 @@ const techStack = [
   },
   {
     tech: "Appwrite",
-    description: "Backend services — Auth, Database, Storage",
+    description: "Backend services — Auth & Database",
   },
   { tech: "TinyMCE", description: "Rich text editing (GPL, self-hosted)" },
 ];

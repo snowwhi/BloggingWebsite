@@ -5,20 +5,9 @@ import BlogCard from "../components/BlogCard";
 import BlogSkeleton from "../components/BlogSkeleton";
 import databaseService from "../lib/databaseService";
 import { Query } from "appwrite";
-import { ImageIcon, BookOpen, PenLine, Users, Sparkles, ArrowRight, Mail } from "lucide-react";
+import { BookOpen, PenLine, Users, ArrowRight, Mail } from "lucide-react";
 import heroPattern from "../assets/hero-pattern.jpg";
 import { toast } from "react-toastify";
-
-const TOPICS = [
-  { label: "Technology", emoji: "💻", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
-  { label: "Design", emoji: "🎨", color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
-  { label: "Science", emoji: "🔬", color: "bg-green-500/10 text-green-600 border-green-500/20" },
-  { label: "Culture", emoji: "🌍", color: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
-  { label: "Business", emoji: "📈", color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
-  { label: "Health", emoji: "🧠", color: "bg-red-500/10 text-red-600 border-red-500/20" },
-  { label: "Travel", emoji: "✈️", color: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20" },
-  { label: "Food", emoji: "🍜", color: "bg-pink-500/10 text-pink-600 border-pink-500/20" },
-];
 
 const Home = () => {
   const [featuredPosts, setFeaturedPosts] = useState<any[]>([]);
@@ -26,7 +15,6 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [totalPosts, setTotalPosts] = useState(0);
   const [email, setEmail] = useState("");
-  const [featuredImgErrors, setFeaturedImgErrors] = useState<Record<string, boolean>>({});
   const postsRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -88,7 +76,6 @@ const Home = () => {
         <div className="absolute inset-0 bg-linear-to-b from-background/80 to-background" />
         <div className="container mx-auto px-4 py-24 text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            
             <h1
               className="font-bold text-foreground mb-5 text-5xl md:text-7xl leading-tight"
               style={{ fontFamily: "'DM Serif Display', serif" }}
@@ -147,7 +134,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* 3. Featured Post Section */}
+      {/* 3. Featured Posts Section */}
       {!loading && featuredPosts.length > 0 && (
         <section className="container mx-auto px-4 py-12">
           <motion.h2
@@ -160,58 +147,42 @@ const Home = () => {
             Featured
           </motion.h2>
           <div className="flex flex-col gap-6">
-            {featuredPosts.map((post) => {
-              const imgUrl = post.featuredimage ? databaseService.getFileView(post.featuredimage) : null;
-              const hasImgError = featuredImgErrors[post.$id];
-              return (
-                <motion.article
-                  key={post.$id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="group flex flex-col md:flex-row bg-card rounded-2xl overflow-hidden border border-border hover:shadow-xl transition-all"
-                >
-                  <Link to={`/post/${post.$id}`} className="w-full md:w-1/2 aspect-video md:aspect-auto relative overflow-hidden min-h-[220px]">
-                    {imgUrl && !hasImgError ? (
-                      <img
-                        src={imgUrl}
-                        alt={post.Title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        onError={() => setFeaturedImgErrors(prev => ({ ...prev, [post.$id]: true }))}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/15">
-                        <ImageIcon className="h-12 w-12 text-muted-foreground/40" />
-                      </div>
-                    )}
-                  </Link>
-                  <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
-                    <div className="mb-4 flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-xs font-medium border border-amber-500/20">
-                        Featured
-                      </span>
-                      <span className="text-xs text-muted-foreground">{getReadingTime(post.Content)} min read</span>
-                    </div>
-                    <Link to={`/post/${post.$id}`}>
-                      <h3 className="text-3xl font-bold mb-4 group-hover:text-primary transition-colors" style={{ fontFamily: "'DM Serif Display', serif" }}>
-                        {post.Title}
-                      </h3>
-                    </Link>
-                    <p className="text-muted-foreground line-clamp-3 mb-6 leading-relaxed">
-                      {stripHtml(post.Content).slice(0, 200)}...
-                    </p>
-                    <div className="mt-auto flex items-center justify-between text-sm text-muted-foreground">
-                      <span>{post.userId?.slice(0, 8) || 'Unknown Author'}</span>
-                      <span>{new Date(post.$createdAt).toLocaleDateString()}</span>
-                    </div>
+            {featuredPosts.map((post) => (
+              <motion.article
+                key={post.$id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-xl transition-all"
+              >
+                <div className="h-1.5 w-full bg-gradient-to-r from-amber-400/80 via-amber-400/40 to-amber-400/10" />
+                <div className="p-8">
+                  <div className="mb-4 flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-xs font-medium border border-amber-500/20">
+                      Featured
+                    </span>
+                    <span className="text-xs text-muted-foreground">{getReadingTime(post.Content)} min read</span>
                   </div>
-                </motion.article>
-              );
-            })}
+                  <Link to={`/post/${post.$id}`}>
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3 group-hover:text-primary transition-colors" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                      {post.Title}
+                    </h3>
+                  </Link>
+                  <p className="text-muted-foreground line-clamp-2 mb-6 leading-relaxed">
+                    {stripHtml(post.Content).slice(0, 200)}...
+                  </p>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>{post.userId?.slice(0, 8) || 'Unknown Author'}</span>
+                    <span>{new Date(post.$createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
           </div>
         </section>
       )}
-      {/* 5. Latest Posts Grid */}
+
+      {/* 4. Latest Posts Grid */}
       <section ref={postsRef} className="container mx-auto px-4 py-12">
         <motion.div
           initial={{ opacity: 0 }}
@@ -247,7 +218,6 @@ const Home = () => {
                 id={post.$id}
                 title={post.Title}
                 content={post.Content}
-                featuredImage={post.featuredimage ? databaseService.getFileView(post.featuredimage) : undefined}
                 userId={post.userId}
                 createdAt={post.$createdAt}
                 index={index}
@@ -261,7 +231,7 @@ const Home = () => {
             animate={{ opacity: 1 }}
             className="text-center py-20 bg-card rounded-2xl border border-dashed border-border"
           >
-            <ImageIcon className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
+            <PenLine className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
             <h3 className="text-xl text-muted-foreground" style={{ fontFamily: "'DM Serif Display', serif" }}>No stories yet</h3>
             <p className="text-sm text-muted-foreground/70 mt-2 mb-6">Be the first to share something.</p>
             <Link
@@ -274,7 +244,7 @@ const Home = () => {
         )}
       </section>
 
-      {/* 6. Newsletter Section */}
+      {/* 5. Newsletter Section */}
       <section className="container mx-auto px-4 py-12 mb-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -315,7 +285,7 @@ const Home = () => {
         </motion.div>
       </section>
 
-      {/* 7. Bottom CTA Strip */}
+      {/* 6. Bottom CTA Strip */}
       <section className="container mx-auto px-4 py-4 mb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

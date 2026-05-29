@@ -6,7 +6,6 @@ export interface BookmarkedPost {
   id: string;
   title: string;
   content: string;
-  featuredImage?: string;
   createdAt?: string;
   userId?: string;
 }

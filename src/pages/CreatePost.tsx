@@ -6,35 +6,18 @@ import { motion } from "framer-motion";
 import { Editor } from "@tinymce/tinymce-react";
 import databaseService from "../lib/databaseService";
 import { ID } from "appwrite";
-import { Send, ImagePlus, ArrowLeft } from "lucide-react";
+import { Send, ArrowLeft } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import appwriteConfig from '../lib/appwriteConfig'
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [featuredImage, setFeaturedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const editorRef = useRef(null);
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFeaturedImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const generateSlug = (title) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "")
-      .slice(0, 36) || ID.unique();
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,18 +32,11 @@ const CreatePost = () => {
 
     setLoading(true);
     try {
-      let imageId = "";
-      if (featuredImage) {
-        const uploaded = await databaseService.uploadFile(featuredImage);
-        if (uploaded) imageId = uploaded.$id;
-      }
-
       const slug = ID.unique();
       await databaseService.createPost({
         title,
         slug,
         content,
-        featuredImage: imageId,
         status: "active",
         userId: user.$id,
       });
@@ -99,27 +75,6 @@ const CreatePost = () => {
               />
             </div>
 
-            {/* Image upload */}
-            <div>
-              <label className="group flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-border p-6 transition-colors hover:border-primary/50 hover:bg-primary/5">
-                <ImagePlus className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Featured Image</p>
-                  <p className="text-xs text-muted-foreground">Click to upload a cover image</p>
-                </div>
-                <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-              </label>
-              {imagePreview && (
-                <motion.img
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  src={imagePreview}
-                  alt="Preview"
-                  className="mt-3 h-24 w-24 rounded-lg object-cover border border-border shadow-sm"
-                />
-              )}
-            </div>
-
             {/* TinyMCE Editor */}
             <div className="rounded-xl border border-border overflow-hidden">
               <Editor
@@ -135,7 +90,7 @@ const CreatePost = () => {
                   skin: theme === "dark" ? "oxide-dark" : "oxide",
                   content_css: theme === "dark" ? "dark" : "default",
                   plugins: [
-                    "advlist", "autolink", "lists", "link", "image",
+                    "advlist", "autolink", "lists", "link",
                     "charmap", "preview", "anchor", "searchreplace",
                     "visualblocks", "code", "fullscreen", "insertdatetime",
                     "media", "table", "code", "help", "wordcount",

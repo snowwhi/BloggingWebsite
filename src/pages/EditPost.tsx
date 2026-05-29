@@ -5,17 +5,13 @@ import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { Editor } from "@tinymce/tinymce-react";
 import databaseService from "../lib/databaseService";
-import { Save, ArrowLeft, ImagePlus } from "lucide-react";
+import { Save, ArrowLeft } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
-import appwriteConfig from "../lib/appwriteConfig";
 
 const EditPost = () => {
   const { id } = useParams();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [featuredImage, setFeaturedImage] = useState("");
-  const [newImage, setNewImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const { user } = useAuth();
@@ -35,7 +31,6 @@ const EditPost = () => {
           return;
         }
 
-        // Check permissions instead of userId field
         const permissions: string[] = post.$permissions || [];
         const canEdit = permissions.includes(`update("user:${user?.$id}")`);
 
@@ -47,12 +42,6 @@ const EditPost = () => {
 
         setTitle(post.Title);
         setContent(post.Content);
-        setFeaturedImage(post.featuredimage || "");
-
-        // Show existing image as preview
-        if (post.featuredimage) {
-          setImagePreview(databaseService.getFileView(post.featuredimage));
-        }
       } catch {
         toast.error("Failed to load post");
         navigate("/");
@@ -62,15 +51,6 @@ const EditPost = () => {
     };
     fetchPost();
   }, [id, user, navigate]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setNewImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,21 +62,9 @@ const EditPost = () => {
 
     setLoading(true);
     try {
-      let imageId = featuredImage; // keep existing image by default
-
-      // If user selected a new image, upload it and delete the old one
-      if (newImage) {
-        const uploaded = await databaseService.uploadFile(newImage);
-        if (uploaded) {
-          if (featuredImage) await databaseService.deleteFile(featuredImage);
-          imageId = uploaded.$id;
-        }
-      }
-
       await databaseService.updatePost(id, {
         title,
         content,
-        featuredImage: imageId,
         status: "active",
         userId: user.$id,
       });
@@ -141,31 +109,6 @@ const EditPost = () => {
               required
             />
 
-            {/* Image upload */}
-            <div>
-              <label className="group flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-border p-6 transition-colors hover:border-primary/50 hover:bg-primary/5">
-                <ImagePlus className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    {imagePreview ? "Change Featured Image" : "Featured Image"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {imagePreview ? "Click to replace current image" : "Click to upload a cover image"}
-                  </p>
-                </div>
-                <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-              </label>
-              {imagePreview && (
-                <motion.img
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  src={imagePreview}
-                  alt="Preview"
-                  className="mt-3 max-h-48 rounded-xl object-cover"
-                />
-              )}
-            </div>
-
             <div className="rounded-xl border border-border overflow-hidden">
               <Editor
                 tinymceScriptSrc="/tinymce/tinymce.min.js"
@@ -180,7 +123,7 @@ const EditPost = () => {
                   skin: theme === "dark" ? "oxide-dark" : "oxide",
                   content_css: theme === "dark" ? "dark" : "default",
                   plugins: [
-                    "advlist", "autolink", "lists", "link", "image",
+                    "advlist", "autolink", "lists", "link",
                     "charmap", "preview", "anchor", "searchreplace",
                     "visualblocks", "code", "fullscreen", "insertdatetime",
                     "media", "table", "code", "help", "wordcount",

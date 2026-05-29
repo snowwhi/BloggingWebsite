@@ -139,11 +139,6 @@ const SearchPage = () => {
                     id={post.$id}
                     title={post.Title}
                     content={post.Content}
-                    featuredImage={
-                      post.featuredimage
-                        ? String(databaseService.getFileView(post.featuredimage))
-                        : undefined
-                    }
                     userId={post.userId}
                     createdAt={post.$createdAt}
                     index={i}

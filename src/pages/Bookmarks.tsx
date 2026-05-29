@@ -61,7 +61,6 @@ const BookmarksPage = () => {
                       id={post.id}
                       title={post.title}
                       content={post.content}
-                      featuredImage={post.featuredImage}
                       userId={post.userId}
                       createdAt={post.createdAt}
                       index={i}
