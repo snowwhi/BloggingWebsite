@@ -38,3 +38,10 @@ externalPort = 80
 deploymentTarget = "static"
 build = ["npm", "run", "build"]
 publicDir = "dist"
+
+[userenv]
+
+[userenv.shared]
+VITE_EMAILJS_SERVICE_ID = "Fyp"
+VITE_EMAILJS_TEMPLATE_ID = "template_tj4jl3f"
+VITE_EMAILJS_PUBLIC_KEY = "qMJ1HvG-2yFxXS1cK"
