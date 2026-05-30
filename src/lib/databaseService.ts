@@ -12,8 +12,6 @@ class DatabaseService {
     this.databases = new Databases(this.client);
   }
 
-  // ─── Posts ───────────────────────────────────────────────────────────────────
-
   async createPost({
     title,
     slug,
@@ -41,6 +39,7 @@ class DatabaseService {
         Title: title,
         Content: content,
         status,
+        featuredimage: "",
       },
       permissions
     );
@@ -76,6 +75,7 @@ class DatabaseService {
         Title: title,
         Content: content,
         status,
+        featuredimage: "",
       },
       permissions
     );
@@ -118,8 +118,6 @@ class DatabaseService {
     }
   }
 
-  // ─── Fix permissions on existing posts ───────────────────────────────────────
-
   async fixPostPermissions(userId: string) {
     try {
       const result = await this.getPosts();
@@ -139,6 +137,7 @@ class DatabaseService {
               Title: doc.Title,
               Content: doc.Content,
               status: doc.status || "active",
+              featuredimage: "",
             },
             [
               Permission.read(Role.any()),
