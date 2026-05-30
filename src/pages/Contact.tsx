@@ -17,9 +17,9 @@ const Contact = () => {
     setLoading(true);
 
     // 2. Define your EmailJS configuration credentials
-    const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-    const TEMPLATE_ID =import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-    const PUBLIC_KEY =import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+    const SERVICE_ID = 'Fyp';
+    const TEMPLATE_ID ='template_tj4jl3f';
+    const PUBLIC_KEY ='qMJ1HvG-2yFxXS1cK';
 
     // 3. Map your form fields to template parameters
     const templateParams = {
