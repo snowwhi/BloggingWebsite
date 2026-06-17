@@ -89,6 +89,6 @@ Collection name: `article`
 | Team Member 2 | Frontend Developer | — |
 | Team Member 3 | Backend Developer | — |
 
-## License
+## Live demo
 
-This project is developed as part of a Final Year Project (FYP) for academic purposes.
+https://commit-42ac815bb04e0480.appwrite.network/
